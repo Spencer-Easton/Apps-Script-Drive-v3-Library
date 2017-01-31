@@ -78,7 +78,7 @@ function CALLPAGE_(path,options, returnParamPath){
   var nextPageToken;
   do{
     if(nextPageToken){
-      url += "pageToken=" + nextPageToken;
+      url = buildUrl_(url, {pageToken:nextPageToken});
     }
     var results = UrlFetchApp.fetch(url, fetchOptions);
     if(results.getResponseCode() != 200){
@@ -88,6 +88,7 @@ function CALLPAGE_(path,options, returnParamPath){
       nextPageToken = resp.nextPageToken;
       returnArray  = returnArray.concat(resp[returnParamPath])
     }
+    url = BASEURL_ + path;
   }while(nextPageToken);
   return returnArray;
 }
@@ -143,7 +144,7 @@ function changesGetStartPageToken(options){
 function changesList(pageToken,options){
   var path = buildUrl_("changes",options);
   var callOptions = {method:"GET"};
-  var ChangeListItems = CALLPAGE_(path,callOptions,"items");
+  var ChangeListItems = CALLPAGE_(path,callOptions,"changes");
   return ChangeListItems;
 }
 
@@ -158,7 +159,7 @@ function changesList(pageToken,options){
 function changesWatch(pageToken,ChannelResource,options){
   var path = buildUrl_("changes/watch",options);
   var callOptions = {method:"POST",payload:JSON.stringify(ChannelResource)};
-  var ChannelItems = CALLPAGE_(path,callOptions,"items");
+  var ChannelItems = CALL_(path,callOptions);
   return ChannelItems;
 }
 
@@ -229,7 +230,7 @@ function commentsGet(fileId,commentId,options){
 function commentsList(fileId,options){
   var path = buildUrl_("files/"+fileId+"/comments",options);
   var callOptions = {method:"GET"};
-  var CommentListItems = CALLPAGE_(path,callOptions,"items");
+  var CommentListItems = CALLPAGE_(path,callOptions,"comments");
   return CommentListItems;
 }
 
@@ -353,7 +354,7 @@ function filesGet(fileId,options){
 function filesList(options){
   var path = buildUrl_("files",options);
   var callOptions = {method:"GET"};
-  var FileListItems = CALLPAGE_(path,callOptions,"items");
+  var FileListItems = CALLPAGE_(path,callOptions,"files");
   return FileListItems;
 }
 
@@ -519,7 +520,7 @@ function repliesGet(fileId,commentId,replyId,options){
 function repliesList(fileId,commentId,options){
   var path = buildUrl_("files/"+fileId+"/comments/"+commentId+"/replies",options);
   var callOptions = {method:"GET"};
-  var ReplyListItems = CALLPAGE_(path,callOptions,"items");
+  var ReplyListItems = CALLPAGE_(path,callOptions,"replies");
   return ReplyListItems;
 }
 
